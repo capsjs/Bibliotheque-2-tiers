@@ -1,5 +1,5 @@
-const prompt = require('prompt-sync')({ sigint: true });
 const GestionnaireBD = require ('../BaseDeDonnees/GestionnaireBD');
+const prompt = require('prompt-sync')({ sigint: true });
 const Livre = require('../Modeles/Livre');
 
 class InterfaceBibliotheque {
@@ -75,7 +75,7 @@ class InterfaceBibliotheque {
 
   retournerLivreInterface() {
     const isbn = prompt("ISBN du livre à retourner : ").trim();
-    const ok = this.gestionnaireBD.rechercherLivre(isbn);
+    const ok = this.gestionnaireBD.retournerLivre(isbn);
     console.log(ok ? "✓ Livre retourné avec succès!" : "❌ Erreur lors du retour");
   }
 

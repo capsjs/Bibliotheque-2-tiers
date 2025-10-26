@@ -1,9 +1,11 @@
-const DataBase = require('better-sqlite3');
+const Database = require('better-sqlite3');
+const path = require('path');
 const Livre = require('../Modeles/Livre');
 
 class GestionnaireBD {
-  constructor(dbPath = 'blibliotheque.db') {
-    this.db = new DataBase(dbPath);
+  constructor(dbPath = path.resolve(process.cwd(), 'bibliotheque.db')) {
+    this.dbPath = dbPath;
+    this.db = new Database(this.dbPath);
     this.initialiserTables();
   }
 
@@ -23,11 +25,12 @@ class GestionnaireBD {
   ajouterLivre(livre) {
     try {
       const stmt = this.db.prepare(
-        'INSERT INTO livres (isnb, titre, auteur, annee, disponible) VALUES (?,?,?,?,1)'
+        'INSERT OR IGNORE INTO livres (isbn, titre, auteur, annee, disponible) VALUES (?, ?, ?, ?, 1)'
       );
-      stmt.run(livre.isbn, livre.titre, livre.auteur, livre.annee);
-      return true;
-    } catch {
+      const info = stmt.run(livre.isbn, livre.titre, livre.auteur, livre.annee);
+      return info.changes === 1;
+    } catch (e) {
+      console.error('ajouterLivre error =>', e.message);
       return false;
     }
   }
@@ -48,6 +51,7 @@ class GestionnaireBD {
     if(!r) return null;
     const livre = new Livre(r.isbn, r.titre, r.auteur, r.annee);
     livre.disponible = r.disponible === 1;
+    return livre;
   }
 
   emprunterLivre(isbn) {

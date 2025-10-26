@@ -4,7 +4,7 @@ class Livre {
     this.titre = titre;
     this.auteur = auteur;
     this.annee = annee;
-    this.disponible;
+    this.disponible = true;
   }
 
   afficherInfo() {
